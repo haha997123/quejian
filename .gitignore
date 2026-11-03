@@ -1,0 +1,29 @@
+# Local dependencies and generated output
+.venv/
+venv/
+node_modules/
+build/
+dist/
+__pycache__/
+*.py[cod]
+assets/app.html
+bundle-check.js
+desktop-check.json
+
+# Local configuration and private data
+.env
+.env.*
+!.env.example
+state.json
+*-state.json
+*.log
+*.pem
+*.key
+*.pfx
+
+# Editor and OS metadata
+.idea/
+.vscode/
+.DS_Store
+Thumbs.db
+desktop.ini

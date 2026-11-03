@@ -1,0 +1,13 @@
+{
+  "name": "quejian",
+  "version": "1.0.0",
+  "private": true,
+  "description": "中文本地日麻何切分析，支持四麻与三麻",
+  "license": "MIT",
+  "type": "module",
+  "scripts": {
+    "test": "node --test tests/engine.test.mjs tests/sanma.test.mjs",
+    "build": "node build-ui.mjs",
+    "check": "node --check bundle-check.js"
+  }
+}
