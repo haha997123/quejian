@@ -1,0 +1,31 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" fill="none">
+  <defs>
+    <linearGradient id="edge" x1="148" y1="240" x2="412" y2="470" gradientUnits="userSpaceOnUse"><stop stop-color="#A5E8C9"/><stop offset="1" stop-color="#4EAF94"/></linearGradient>
+    <linearGradient id="ivory" x1="145" y1="209" x2="353" y2="442" gradientUnits="userSpaceOnUse"><stop stop-color="#FFFDF3"/><stop offset="1" stop-color="#FFE9C6"/></linearGradient>
+    <linearGradient id="fur" x1="250" y1="112" x2="256" y2="306" gradientUnits="userSpaceOnUse"><stop stop-color="#FFFDF4"/><stop offset="1" stop-color="#FFF0D6"/></linearGradient>
+  </defs>
+  <!-- A single, strong silhouette: a little cat leaning over a Mahjong tile. -->
+  <path d="M146 200H375c26 0 47 21 47 47v192c0 25-20 46-46 46H151c-26 0-47-21-47-47V246c0-25 18-46 42-46Z" fill="url(#edge)" stroke="#315B51" stroke-width="13" stroke-linejoin="round"/>
+  <rect x="91" y="191" width="307" height="264" rx="40" fill="url(#ivory)" stroke="#315B51" stroke-width="13"/>
+  <path d="M110 394v18c0 15 12 27 27 27h215" stroke="#FFFFFF" stroke-opacity=".78" stroke-width="9" stroke-linecap="round"/>
+  <!-- Wide, rounded ears remain readable at desktop icon sizes. -->
+  <path d="M108 154 105 62c0-13 13-20 24-12l80 56M302 106l80-56c11-8 24-1 24 12l-3 92" fill="url(#fur)" stroke="#315B51" stroke-width="13" stroke-linecap="round" stroke-linejoin="round"/>
+  <path d="m124 77 4 60 52-29-56-31Zm262 0-56 31 52 29 4-60Z" fill="#F3A398"/>
+  <path d="M139 121c28-24 64-34 117-34s90 10 117 34c29 25 47 57 47 92 0 66-70 105-164 105S92 279 92 213c0-35 18-67 47-92Z" fill="url(#fur)" stroke="#315B51" stroke-width="13"/>
+  <path d="m239 95 4 27 13-15 13 15 4-27" fill="#E9B87E" opacity=".65"/>
+  <ellipse cx="177" cy="222" rx="25" ry="16" fill="#F4B0A2"/>
+  <ellipse cx="335" cy="222" rx="25" ry="16" fill="#F4B0A2"/>
+  <ellipse cx="193" cy="193" rx="13" ry="18" fill="#315B51"/>
+  <ellipse cx="319" cy="193" rx="13" ry="18" fill="#315B51"/>
+  <circle cx="189" cy="187" r="4" fill="#FFFFFF"/><circle cx="315" cy="187" r="4" fill="#FFFFFF"/>
+  <path d="M245 218c-5-3-1-10 4-9h14c5-1 9 6 4 9l-11 7-11-7Z" fill="#DB8F86"/>
+  <path d="M256 225v8c0 11-17 17-27 7m27-7c0 11 17 17 27 7" stroke="#315B51" stroke-width="8" stroke-linecap="round"/>
+  <!-- Paws visually connect the character to the tile. -->
+  <path d="M134 288c0-17 14-30 31-30s31 13 31 30v11c0 17-14 30-31 30s-31-13-31-30v-11Zm182 0c0-17 14-30 31-30s31 13 31 30v11c0 17-14 30-31 30s-31-13-31-30v-11Z" fill="#FFF4DF" stroke="#315B51" stroke-width="10"/>
+  <path d="M155 303v9m20-9v9m162-9v9m20-9v9" stroke="#D6B792" stroke-width="5" stroke-linecap="round"/>
+  <!-- Two simple green bamboo stalks identify the Mahjong tile without text. -->
+  <path d="M230 352v57m51-57v57" stroke="#378D73" stroke-width="19" stroke-linecap="round"/>
+  <path d="M220 376h20m-20 22h20m31-22h20m-20 22h20" stroke="#B6E5BD" stroke-width="6" stroke-linecap="round"/>
+  <path d="M220 354c-16-2-22-9-24-19 15 0 24 6 24 19Zm71 0c16-2 22-9 24-19-15 0-24 6-24 19Z" fill="#59A783"/>
+  <path d="m450 124 10 20 21 8-21 9-10 21-9-21-21-9 21-8 9-20Z" fill="#FFD674" stroke="#B78B48" stroke-width="6" stroke-linejoin="round"/>
+</svg>
