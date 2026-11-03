@@ -1,0 +1,62 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#fff8ed"><title>雀见 · 日麻何切</title>
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+  <div class="scene" aria-hidden="true"></div>
+  <header class="app-header">
+    <a class="brand" href="#calculator" data-view="calculator" aria-label="雀见，回到何切"><span class="brand-seal"><svg viewBox="0 0 56 60" aria-hidden="true"><rect x="8" y="5" width="40" height="48" rx="11" fill="#ffffff" stroke="#6cbaa4" stroke-width="3"/><path d="M12 42v5c0 4 3 7 7 7h20c4 0 7-3 7-7v-5" fill="#80d2b7"/><path d="m16 22 2-8 8 5m4 0 8-5 2 8" fill="#fff2db" stroke="#ef9f79" stroke-width="2.5" stroke-linejoin="round"/><ellipse cx="28" cy="28" rx="13" ry="11" fill="#fff2db" stroke="#ef9f79" stroke-width="2.5"/><path d="M21 27v2m14-2v2m-10 4 3 2 3-2" fill="none" stroke="#536b66" stroke-width="2.5" stroke-linecap="round"/><circle cx="18" cy="31" r="2" fill="#f8b4a5"/><circle cx="38" cy="31" r="2" fill="#f8b4a5"/><path d="m44 6 2-3 2 3 3 2-3 2-2 3-2-3-3-2 3-2Z" fill="#f5c36b"/></svg></span><span class="brand-name">雀见<small>日麻何切计算器</small></span></a>
+    <nav class="main-nav" aria-label="主要功能">
+      <button data-view="calculator" class="active"><svg viewBox="0 0 24 24" aria-hidden="true"><rect x="4" y="3" width="16" height="18" rx="2"/><path d="M8 8h8M8 12h8m-6 4h4"/></svg>何切</button>
+      <button data-view="help"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 5c3-1 6-1 8 1 2-2 5-2 8-1v15c-3-1-6-1-8 1-2-2-5-2-8-1V5Zm8 1v15"/></svg>使用帮助</button>
+      <button data-view="ai"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="m12 2 3 7 7 3-7 3-3 7-3-7-7-3 7-3 3-7Z"/></svg>AI 跑谱<span class="nav-arrow">↗</span></button>
+    </nav>
+    <div class="local-status"><i></i>本地计算<span>无需联网</span></div>
+  </header>
+  <main id="view-calculator" class="view">
+    <div class="workspace-bar"><div class="workspace-title"><h1>何切计算</h1><span id="analysis-mode">切牌前 · 比较每种切牌</span></div><div class="rules-switch" aria-label="麻将规则"><button id="rule-yonma" class="selected" aria-pressed="true">四人麻将</button><button id="rule-sanma" aria-pressed="false">三人麻将</button></div></div>
+    <div class="workspace">
+      <section class="paper-panel editor-panel" aria-label="手牌编辑">
+        <div class="panel-heading"><h2><span class="section-jewel"></span>你的手牌</h2><div class="heading-actions"><label class="meld-control">已完成面子 <select id="open-melds" aria-label="副露或暗杠面子数"><option value="0">0 · 门清</option><option value="1">1 组</option><option value="2">2 组</option><option value="3">3 组</option><option value="4">4 组</option></select></label><span id="hand-count" class="count-badge">14 张</span><button id="clear-hand" class="text-button">清空</button></div></div>
+        <div class="hand-table"><div id="hand-tiles" class="hand-tiles" aria-label="当前手牌，点击移除"></div><span class="tray-hint">点击移除</span></div>
+        <div class="notation-row"><input id="hand-input" aria-label="手牌简写" maxlength="1024" autocomplete="off" spellcheck="false" value="123456m234p67s557z" placeholder="123m456p789s东南白"><button id="analyze" class="primary-button" title="Ctrl + Enter">计算<span>↗</span></button></div>
+        <div class="input-hint"><span>m 万 · p 筒 · s 索 · z 字 · 0 赤五</span><span id="hand-requirement">13 张看待牌 · 14 张上限</span></div>
+        <div id="error" role="alert" class="error hidden"></div>
+        <div class="picker-heading"><span class="picker-title">添加手牌</span><span class="picker-tip">左键加牌 · 右键减牌</span></div>
+        <div id="tile-picker" class="tile-picker" aria-label="麻将牌选择器"></div>
+        <div class="examples"><span>试一手</span><button data-example="two">何切示例</button><button data-example="seven">七对子</button><button data-example="orphans">国士十三面</button><button data-example="nine">九莲九面</button></div>
+      </section>
+      <div class="analysis-column">
+        <section class="result-hero" id="result-hero" aria-live="polite"><div class="hero-top"><h2 id="hero-title">牌效推荐</h2><span id="shanten-badge" class="shanten-badge">听牌</span></div><svg class="hero-buddy" viewBox="0 0 76 80" aria-hidden="true"><path d="m12 26 4-16 16 12m12 0 16-12 4 16" fill="#fff8e7" stroke="#efa990" stroke-width="3" stroke-linejoin="round"/><ellipse cx="38" cy="43" rx="28" ry="25" fill="#fff8e7" stroke="#efa990" stroke-width="3"/><path d="M27 39v4m22-4v4m-18 9 7 4 7-4" fill="none" stroke="#657b72" stroke-width="3.5" stroke-linecap="round"/><ellipse cx="20" cy="49" rx="5" ry="3" fill="#f9c1b3"/><ellipse cx="56" cy="49" rx="5" ry="3" fill="#f9c1b3"/><path d="m66 3 2 4 5 1-4 3v5l-4-3-5 2 1-5-3-4 5 1 3-4Z" fill="#f6c36a"/></svg><div id="hero-body"></div><div class="wait-heading"><span id="wait-title">待牌</span><span id="alive-summary"></span></div><div id="hero-foot" class="waits"></div><div class="after-hand"><div><span id="after-title">切牌后的手牌</span><span id="shape-summary"></span></div><div id="after-tiles" class="after-tiles"></div></div></section>
+        <section class="paper-panel results-panel"><div class="panel-heading"><h2><span class="section-jewel"></span><span id="result-title">切牌比较</span></h2><button id="export-result" class="text-button">导出结果 ↗</button></div><div id="results-label" class="results-label"><span>切哪张</span><span>向听</span><span>面 / 张</span></div><div id="results-list" class="results-list" aria-label="切牌候选，方向键切换"></div><p class="results-caption">优先向听更低，其次有效张数更多。</p></section>
+      </div>
+    </div>
+    <footer class="page-footer"><span><i></i>牌形在本机计算与保存</span><span id="calculation-note">张数按手牌估算 · 不判断役、打点、防守与振听</span></footer>
+  </main>
+  <dialog id="view-help" class="salon-dialog help-dialog" aria-labelledby="help-title">
+    <div class="dialog-top"><span class="dialog-eyebrow">雀见 · 使用手册</span><button class="dialog-close" data-close aria-label="关闭帮助">×</button></div>
+    <h2 id="help-title" class="dialog-title">使用帮助</h2>
+    <div class="help-grid">
+      <section><h3>① 输入与选牌</h3><p>左键点击牌盘加牌，右键减牌；点击手牌直接移除。也可粘贴简写：</p><code class="example-code">123456m234p67s557z</code><p>输入张数上限为 14 张，每设置 1 组已完成面子，上限减少 3 张。加牌或粘贴超限时保留原手牌；先减牌，再添加其他牌。</p><p>万 m、筒 p、索 s、字 z。1–7z 对应东、南、西、北、白、发、中；0m / 0p / 0s 是赤五。赤五与普通五共享四张上限，效率比较按牌种合并。</p></section>
+      <section><h3>② 看面数与张数</h3><p><strong>面</strong>是不同待牌的种类数；<strong>张</strong>是每种待牌按四张减去当前手牌与本次切牌后得到的剩余张数合计。</p><p>0 向听是形状听牌，−1 是和牌形。未听牌时显示使向听降低的有效牌。张数不扣除牌河、固定面子、宝牌指示牌或对手手牌，因此只是估算，并非真实牌山余量。</p></section>
+      <section><h3>③ 四麻、三麻与副露</h3><p>门清 14 张看何切，13 张看待牌。有副露或暗杠时选择已完成面子数，只录入剩余手牌；固定面子的牌不会从估算张数中扣除。</p><p>三麻不使用 2–8 万。北仍按普通字牌计算，已拔出的北不要放入手牌，也<strong>不计为面子</strong>。切换规则保留输入，不符合规则时会提示。</p></section>
+      <section><h3>④ 快捷操作</h3><dl class="shortcut-list"><div><dt><kbd>Ctrl</kbd> + <kbd>Enter</kbd></dt><dd>立即计算</dd></div><div><dt><kbd>Alt</kbd> + <kbd>1 / 2 / 3</kbd></dt><dd>何切 / 帮助 / AI 跑谱</dd></div><div><dt><kbd>Alt</kbd> + <kbd>H</kbd></dt><dd>编辑手牌</dd></div><div><dt><kbd>↑</kbd> / <kbd>↓</kbd></dt><dd>列表聚焦后切换候选</dd></div><div><dt><kbd>Esc</kbd></dt><dd>关闭浮层</dd></div></dl></section>
+    </div>
+    <p class="dialog-footnote">支持普通型、七对子与国士。分析牌形，张数按手牌估算，不判断役、点数、防守与振听。</p>
+  </dialog>
+  <dialog id="view-ai" class="salon-dialog ai-dialog" aria-labelledby="ai-title">
+    <div class="dialog-top"><span class="dialog-eyebrow">完整牌谱 · AI 复盘</span><button class="dialog-close" data-close aria-label="关闭 AI 跑谱">×</button></div>
+    <h2 id="ai-title" class="dialog-title">AI 跑谱</h2><p class="dialog-lead">完整牌谱复盘，请在浏览器打开以下网站。</p>
+    <div class="ai-service"><div class="service-mark coach-mark">极</div><div class="service-content"><div class="service-title"><h3>大教练／极雀</h3><span class="service-tag">三麻 · 四麻</span></div><p>雀魂 · 天凤</p><span class="service-note">三麻需登录；部分模型需会员或额度。</span></div><button class="primary-button external-button" data-external="https://gokujan.com/">打开网站 <span>↗</span></button></div>
+    <div class="ai-service"><div class="service-mark tingque-mark">听</div><div class="service-content"><div class="service-title"><h3>听雀</h3><span class="service-tag">三麻 · 四麻</span></div><p>雀魂 · 天凤 · 雀姬</p><span class="service-note">可免注册试一局，常规复盘需注册。</span></div><button class="primary-button external-button" data-external="https://tingque.ai/trial">打开网站 <span>↗</span></button></div>
+    <div class="ai-service"><div class="service-mark mortal-mark">M</div><div class="service-content"><div class="service-title"><h3>Mortal</h3><span class="service-tag">四麻 · 简体中文</span></div><p>雀魂 · 天凤</p><span class="service-note">在网页选择中文，提交牌谱链接后分析。</span></div><button class="primary-button external-button" data-external="https://mjai.ekyu.moe/">打开网站 <span>↗</span></button></div>
+    <div class="ai-service"><div class="service-mark naga-mark">N</div><div class="service-content"><div class="service-title"><h3>NAGA</h3><span class="service-tag neutral">四麻 · 日文 · 付费</span></div><p>天凤</p><span class="service-note">按网站说明登录、购点与提交牌谱。</span></div><button class="secondary-button external-button" data-external="https://naga.dmv.nico/naga_report/top/">打开网站 <span>↗</span></button></div>
+    <div class="ai-notice"><span>↗</span><p>会在系统浏览器打开，需要联网。外部网站有自己的账号、收费与支持规则；当前工具不上传手牌或替你提交牌谱。</p></div>
+  </dialog>
+  <div id="toast" class="toast hidden" role="status"></div>
+  <script type="module" src="app.js"></script>
+</body>
+</html>
