@@ -4,6 +4,14 @@
 
 本仓库公开何切算法、界面、Windows 桌面宿主与测试，欢迎学习、提 Issue 和提交改进。项目采用 [MIT 许可证](LICENSE)，第三方素材见 [许可说明](THIRD_PARTY_NOTICES.md)。
 
+## 下载桌面版
+
+**[下载 Windows 桌面版（ZIP）](https://github.com/haha997123/quejian/releases/latest/download/Quejian-Windows-x64.zip)**
+
+解压后双击「雀见.exe」即可使用。Windows x64 便携版，无需安装 Python 或 Node.js；窗口需要 Microsoft Edge WebView2 Runtime。中文使用说明和许可文件随包提供。
+
+[全部版本与更新说明](https://github.com/haha997123/quejian/releases)
+
 ## 功能
 
 - 13 张看有效进张，14 张逐种比较何切；有固定面子时自动减少手牌上限。
