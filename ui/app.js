@@ -7,7 +7,16 @@ const honors = ['东', '南', '西', '北', '白', '发', '中'];
 const examples = { two: '123456m234p67s557z', seven: '1122m3344p556s77z', orphans: '19m19p19s1234567z', nine: '1112345678999m' };
 const sanmaExamples = { two: '123456p234p67s557z', seven: '1122s3344p556s77z', orphans: examples.orphans, nine: '1112345678999p' };
 const escapeHTML = value => String(value).replace(/[&<>"']/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' })[c]);
-const pipLayouts = { 2: [[24,18],[24,48]], 3: [[14,17],[24,33],[34,49]], 4: [[14,18],[34,18],[14,48],[34,48]], 5: [[13,17],[35,17],[24,33],[13,49],[35,49]], 6: [[14,16],[34,16],[14,33],[34,33],[14,50],[34,50]], 7: [[13,12],[24,21],[35,30],[14,43],[34,43],[14,55],[34,55]], 8: [[14,12],[34,12],[14,26],[34,26],[14,40],[34,40],[14,54],[34,54]], 9: [[12,15],[24,15],[36,15],[12,33],[24,33],[36,33],[12,51],[24,51],[36,51]] };
+const pipLayouts = {
+  2: [[24, 18], [24, 48]],
+  3: [[14, 17], [24, 33], [34, 49]],
+  4: [[14, 18], [34, 18], [14, 48], [34, 48]],
+  5: [[13, 17], [35, 17], [24, 33], [13, 49], [35, 49]],
+  6: [[13, 14], [35, 14], [13, 33], [35, 33], [13, 52], [35, 52]],
+  7: [[13, 12], [24, 21], [35, 30], [14, 43], [34, 43], [14, 55], [34, 55]],
+  8: [[13, 10], [35, 10], [13, 25], [35, 25], [13, 40], [35, 40], [13, 55], [35, 55]],
+  9: [[12, 15], [24, 15], [36, 15], [12, 33], [24, 33], [36, 33], [12, 51], [24, 51], [36, 51]],
+};
 
 // Souzu artwork adapted from FluffyStuff/riichi-mahjong-tiles (CC0 public domain).
 // Source revision 26e127ba2117f45cdce5ea0225748cc0cfad3169, Regular/Sou1..9 and Sou5-Dora.svg.
@@ -42,10 +51,12 @@ function tileArt(index, red) {
     if (number === 1) {
       art = `<circle cx="24" cy="33" r="17" fill="${ink}"/><circle cx="24" cy="33" r="12" fill="${cream}"/><circle cx="24" cy="33" r="8.2" fill="${green}"/><circle cx="24" cy="33" r="3.5" fill="${cream}"/>`;
     } else {
-      art = pipLayouts[number].map(([x,y], i) => {
-        const color = red ? crimson : number === 2 ? green : (number === 5 && i === 2) || (number === 9 && y === 33) || (number === 7 && i >= 3) ? crimson : (number === 3 && i === 1) || (number === 6 && y === 33) || (number === 8 && y < 30) || (number === 7 && i < 3) ? green : ink;
-        const r = number >= 7 ? 4.9 : number === 6 ? 5.9 : 6.7;
-        return `<circle cx="${x}" cy="${y}" r="${r}" fill="${color}"/><circle cx="${x}" cy="${y}" r="${r * .45}" fill="${cream}"/>`;
+      art = pipLayouts[number].map(([x, y], i) => {
+        const redPip = red || (number === 5 && i === 2) || (number === 7 && i >= 3) || (number === 9 && y === 33);
+        const greenPip = number === 2 || (number === 3 && i === 1) || (number === 6 && y === 33) || (number === 7 && i < 3) || (number === 8 && i < 4);
+        const color = redPip ? crimson : greenPip ? green : ink;
+        const radius = number >= 7 ? 5.4 : 6.7;
+        return `<circle cx="${x}" cy="${y}" r="${radius}" fill="${color}"/><circle cx="${x}" cy="${y}" r="${radius * .45}" fill="${cream}"/>`;
       }).join('');
     }
   } else if (suit === 2) {
@@ -141,8 +152,7 @@ function changeMelds() {
   state.acceptedMelds = requested;
   analyze();
 }
-function shantenText(n) { return n === -1 ? '和牌形' : n === 0 ? '听牌' : `${n} 向听`; }
-function shortShanten(n) { return n === -1 ? '和牌' : `${n}`; }
+function progressText(n) { return n === 0 ? '已听牌' : `差 ${n} 步`; }
 function discardIsRed(index) { return index < 27 && index % 9 === 4 && state.hand?.counts[index] > 0 && state.hand.counts[index] === state.hand.reds[Math.floor(index / 9)]; }
 function setError(message) { $('error').textContent = message; $('error').classList.toggle('hidden', !message); }
 function toast(message) { $('toast').textContent = message; $('toast').classList.remove('hidden'); clearTimeout(state.timer); state.timer = setTimeout(() => $('toast').classList.add('hidden'), 2800); }
@@ -203,50 +213,61 @@ function renderPickerCounts() {
 }
 
 function renderWaits(items) {
-  if (!items.length) return '<span class="wait-label">暂无使向听降低的合法牌</span>';
-  return items.map(item => `<span class="wait-item ${item.remaining === 0 ? 'dead' : ''}" title="${escapeHTML(item.name)}：按手牌估算剩余 ${item.remaining} 张">${tile(item.index)}<span class="wait-count">${item.remaining} 张</span></span>`).join('');
+  if (!items.length) return '<span class="wait-label">这手牌暂时没有可列出的牌。</span>';
+  return items.map(item => `<span class="wait-item ${item.remaining === 0 ? 'dead' : ''}" title="${escapeHTML(item.name)}，估算剩余 ${item.remaining} 张">${tile(item.index)}<span class="wait-count">${escapeHTML(item.name)} ${item.remaining}张</span></span>`).join('');
 }
 
-function shapeSummary(shapes) {
-  const parts = [`普通 ${shortShanten(shapes.normal)}`];
-  if (shapes.chiitoitsu !== null) parts.push(`七对 ${shortShanten(shapes.chiitoitsu)}`, `国士 ${shortShanten(shapes.kokushi)}`);
-  return parts.join(' · ');
+function explainResult(row, discardName) {
+  if (row.shanten === 0) {
+    const status = discardName ? `打出 ${discardName} 就能听牌。` : '这手牌已经听牌。';
+    return status + (row.liveKinds ? '再拿到下方任意一种有剩余的牌，就能凑齐牌型。' : '按手牌估算，能等的牌已经用完。');
+  }
+  const status = `${discardName ? `打出 ${discardName} 后，` : ''}离听牌还差 ${row.shanten} 步。`;
+  if (!row.liveKinds) return status + '目前没有剩余的牌能让手牌更接近听牌。';
+  return status + (row.shanten === 1 ? '摸到下方任意一种还有剩余的牌，再打掉多余的牌，就能听牌。' : '摸到下方任意一种还有剩余的牌，就能更接近听牌。');
 }
 
 function renderHero(row, discard = null) {
   const isWait = row.shanten === 0;
-  const kinds = isWait ? row.waitKinds : row.improving.length;
-  const alive = row.improving.filter(item => item.remaining > 0).length;
+  const discardName = discard === null ? null : `${discardIsRed(discard) ? '赤' : ''}${tileName(discard)}`;
   const complete = state.result?.mode === 'discard' && state.result.shanten === -1;
-  $('hero-title').textContent = discard === null ? '当前牌形' : state.selected === state.result?.discards[0]?.index ? '牌效推荐' : '所选切牌';
-  $('shanten-badge').textContent = shantenText(row.shanten);
-  $('hero-body').innerHTML = `<div class="hero-main">${discard === null ? `<div class="draw-call">${isWait ? '当前<br>待牌' : '摸牌<br>进张'}</div>` : `<div class="discard-call"><span>切</span>${tile(discard, { size: 'large', red: discardIsRed(discard) })}</div>`}<div><div class="hero-number">${kinds}<small>${isWait ? '面' : '种'}</small><span class="separator">/</span>${row.liveTotal}<small>张</small></div><div class="hero-sub">${complete ? '当前已是和牌形；以下为继续切牌的比较' : isWait ? '形状听牌 · 张数按手牌估算' : '使向听降低的有效牌 · 张数按手牌估算'}</div></div></div>`;
-  $('wait-title').textContent = isWait ? '待牌' : '有效牌';
-  $('alive-summary').textContent = `${alive} 种有活张${kinds - alive ? ` · ${kinds-alive} 种耗尽` : ''}`;
+  const isFirstChoice = !complete && state.selected === state.result?.discards[0]?.index;
+  const notice = complete ? '<p class="hero-sub">当前手牌已凑齐和牌所需的牌型。下面显示如果继续打牌会怎样。</p>' : '';
+  $('hero-title').textContent = discard === null ? '这手牌还缺什么' : isFirstChoice ? '推荐先打这张' : '打出这张会怎样';
+  $('shanten-badge').textContent = complete ? '当前牌型已凑齐' : progressText(row.shanten);
+  $('hero-body').innerHTML = `${notice}<div class="hero-main">${discard === null ? `<div class="draw-call">${isWait ? '等哪些<br>牌' : '哪些牌<br>有用'}</div>` : `<div class="discard-call"><span>打出</span>${tile(discard, { size: 'large', red: discardIsRed(discard) })}</div>`}<div><div class="hero-number">${row.liveKinds}<small>种</small><span class="separator">/</span>${row.liveTotal}<small>张</small></div><div class="hero-sub">${escapeHTML(explainResult(row, discardName))}</div></div></div>`;
+  $('wait-title').textContent = isWait ? '等这些牌' : '摸到这些牌有帮助';
+  $('alive-summary').textContent = '按手牌估算张数';
   $('hero-foot').innerHTML = renderWaits(row.improving);
   const preview = { counts: state.hand.counts.slice(), reds: state.hand.reds.slice() };
   if (discard !== null) { preview.counts[discard]--; if (discardIsRed(discard)) preview.reds[Math.floor(discard / 9)]--; }
-  $('after-title').textContent = discard === null ? '当前牌形' : '切牌后的手牌';
-  $('shape-summary').textContent = shapeSummary(row.shapeShanten);
+  $('after-title').textContent = discard === null ? '当前手牌' : '打出这张后留下的牌';
+  $('shape-summary').textContent = `${state.hand.total - (discard === null ? 0 : 1)} 张`;
   renderTiles($('after-tiles'), preview, { size: 'mini' });
 }
 
 function renderResults() {
   const result = state.result;
-  $('analysis-mode').textContent = result.mode === 'discard' ? '切牌前 · 比较每种切牌' : '摸牌前 · 查看待牌与有效牌';
+  $('analysis-mode').textContent = result.mode === 'discard' ? '比较打出不同牌的结果' : '看看接下来摸什么牌有用';
   if (result.mode === 'discard') {
-    $('result-title').textContent = '切牌比较';
+    $('result-title').textContent = '比较打出不同的牌';
     $('results-label').classList.remove('hidden');
-    $('results-label').lastElementChild.textContent = result.discards.some(row => row.shanten === 0) ? '面 / 张' : '种 / 张';
     if (!result.discards.some(row => row.index === state.selected)) state.selected = result.discards[0]?.index;
-    $('results-list').innerHTML = result.discards.map((row, i) => `<button class="result-row ${row.index === state.selected ? 'selected' : ''}" data-discard="${row.index}" aria-pressed="${row.index === state.selected}" aria-label="切${escapeHTML(row.name)}，${shantenText(row.shanten)}，${row.shanten === 0 ? row.waitKinds+'面' : row.improving.length+'种'}，${row.liveTotal}张"><span class="result-discard"><span class="result-rank">${String(i+1).padStart(2,'0')}</span>${tile(row.index, { size: 'small', red: discardIsRed(row.index) })}${i === 0 ? '<span class="recommend-tag">推荐</span>' : `<span>${escapeHTML(row.name)}</span>`}</span><span>${shantenText(row.shanten)}</span><span class="row-numbers"><strong>${row.shanten === 0 ? row.waitKinds : row.improving.length}</strong><small>${row.shanten === 0 ? '面' : '种'}</small><strong>${row.liveTotal}</strong><small>张</small></span></button>`).join('');
+    $('results-list').innerHTML = result.discards.map((row, i) => {
+      const red = discardIsRed(row.index);
+      const name = escapeHTML(`${red ? '赤' : ''}${row.name}`);
+      const selected = row.index === state.selected;
+      const progress = progressText(row.shanten);
+      const accessibleProgress = row.shanten === 0 ? progress : `离听牌还${progress}`;
+      return `<button class="result-row ${selected ? 'selected' : ''}" data-discard="${row.index}" aria-pressed="${selected}" aria-label="打出 ${name}，${accessibleProgress}，有用的牌 ${row.liveKinds} 种，估算 ${row.liveTotal} 张"><span class="result-discard"><span class="result-rank">${String(i+1).padStart(2,'0')}</span>${tile(row.index, { size: 'small', red })}<span>${name}</span></span><span>${progress}</span><span class="row-numbers"><strong>${row.liveKinds}</strong><small>种</small><strong>${row.liveTotal}</strong><small>张</small></span></button>`;
+    }).join('');
     const selected = result.discards.find(row => row.index === state.selected);
     if (selected) renderHero(selected, selected.index);
   } else {
     state.selected = null;
-    $('result-title').textContent = '牌形分析';
+    $('result-title').textContent = '怎么看结果';
     $('results-label').classList.add('hidden');
-    $('results-list').innerHTML = `<div class="draw-details">当前 ${result.tileCount} 张手牌，${result.shanten === 0 ? '已经形状听牌，待牌见上方。' : '有效牌见上方。'}<div class="shape-chips"><span>普通型 ${shantenText(result.shapeShanten.normal)}</span>${result.shapeShanten.chiitoitsu === null ? '' : `<span>七对子 ${shantenText(result.shapeShanten.chiitoitsu)}</span><span>国士 ${shantenText(result.shapeShanten.kokushi)}</span>`}</div></div>`;
+    $('results-list').innerHTML = '<div class="draw-details">上面列出下一张摸到会有帮助的牌。只要再加一张，就能比较打出哪张更合适。</div>';
     renderHero(result);
   }
 }
@@ -262,7 +283,7 @@ function analyze(reset = true) {
     $('hand-count').textContent = `${hand.total} 张`;
     const melds = Number($('open-melds').value);
     const draw = 13 - melds * 3;
-    $('hand-requirement').textContent = `${draw} 张看待牌 · ${draw+1} 张上限`;
+    $('hand-requirement').textContent = `${draw} 张看摸什么有用，${draw+1} 张看打哪张`;
     renderPickerCounts();
     state.result = analyzeHand({ counts: hand.counts, visible: zero(), openMelds: melds, rules: state.rules });
     setError(''); renderResults();
@@ -271,17 +292,19 @@ function analyze(reset = true) {
     if (state.desktopReady && window.pywebview?.api?.save_state) window.pywebview.api.save_state(preferences).catch(() => {});
   } catch (error) {
     const empty = hand?.total === 0;
-    setError(empty ? '' : error.message);
+    const target = handLimit() - 1;
+    const incomplete = hand && hand.total < target && error.message.startsWith('已有');
+    setError(empty ? '' : incomplete ? `再加 ${target - hand.total} 张，就能查看摸什么牌有用。` : error.message);
     $('analysis-mode').textContent = '编辑手牌 · 补齐张数后自动计算';
     $('shanten-badge').textContent = '等待手牌';
     $('hero-title').textContent = '分析结果';
-    $('hero-body').innerHTML = `<div class="empty-hero"><strong>${empty ? '摆好一手，慢慢看。' : '先把牌形补齐。'}</strong><span>${empty ? '从左侧选牌，或粘贴一手牌的简写。' : '检查左侧提示，结果会随着手牌自动更新。'}</span></div>`;
-    $('wait-title').textContent = '待牌'; $('alive-summary').textContent = '';
+    $('hero-body').innerHTML = `<div class="empty-hero"><strong>${empty ? '先选几张牌。' : '先补齐手牌。'}</strong><span>${empty ? '可以点击牌盘，也可以粘贴手牌简写。' : '手牌张数合适后会自动显示结果。'}</span></div>`;
+    $('wait-title').textContent = '有用的牌'; $('alive-summary').textContent = '';
     $('hero-foot').innerHTML = '<span class="wait-label">使用牌盘，或粘贴手牌简写。</span>';
-    $('after-title').textContent = '切牌后的手牌'; $('shape-summary').textContent = ''; $('after-tiles').innerHTML = '';
-    $('result-title').textContent = '切牌比较';
+    $('after-title').textContent = '手牌预览'; $('shape-summary').textContent = ''; $('after-tiles').innerHTML = '';
+    $('result-title').textContent = '打哪张';
     $('results-label').classList.add('hidden');
-    $('results-list').innerHTML = '<div class="empty-state">输入有效手牌后，自动展示切牌比较。<br>也可点击左下方示例开始。</div>';
+    $('results-list').innerHTML = '<div class="empty-state">选好手牌后会自动分析。<br>也可以先点一手示例牌试试。</div>';
     if (!hand) { state.hand = null; $('hand-tiles').innerHTML = ''; $('hand-count').textContent = '检查输入'; }
     renderPickerCounts();
   }
