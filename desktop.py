@@ -142,6 +142,12 @@ window.addEventListener('unhandledrejection', event => window.__desktopStartupEr
                     const picker = index => document.querySelector(`#tile-picker .picker-cell[data-index="${index}"][data-red="0"] button`);
                     const count = () => document.querySelectorAll('#hand-tiles .tile').length;
                     const original = field.value;
+                    const pickerPosition = () => {
+                        const {x, y} = picker(0).getBoundingClientRect();
+                        return [x, y, window.scrollY];
+                    };
+                    const initialPosition = pickerPosition();
+                    const pickerStayedPut = () => pickerPosition().every((value, index) => Math.abs(value-initialPosition[index]) < 0.5);
                     picker(9).click();
                     const blocksFifteenth = field.value===original && count()===14;
                     picker(0).dispatchEvent(new MouseEvent('contextmenu', {bubbles:true,cancelable:true}));
@@ -156,7 +162,14 @@ window.addEventListener('unhandledrejection', event => window.__desktopStartupEr
                     melds.dispatchEvent(new Event('change', {bubbles:true}));
                     const rejectsExcessMeldChange = melds.value==='0' && field.value===original;
                     const copyButtonRemoved = !document.getElementById('copy-hand');
-                    return {blocksFifteenth,removesAtLimit,addsAfterRemoval,rejectsExcessPaste,rejectsExcessMeldChange,copyButtonRemoved};
+                    document.getElementById('clear-hand').click();
+                    let pickerStableThroughHand = count()===0 && pickerStayedPut();
+                    const defaultTiles = [0,1,2,3,4,5,10,11,12,23,24,31,31,33];
+                    defaultTiles.forEach((index, offset) => {
+                        picker(index).click();
+                        pickerStableThroughHand = pickerStableThroughHand && count()===offset+1 && pickerStayedPut();
+                    });
+                    return {blocksFifteenth,removesAtLimit,addsAfterRemoval,rejectsExcessPaste,rejectsExcessMeldChange,copyButtonRemoved,pickerStableThroughHand};
                 })()""")
                 time.sleep(0.25)
                 diagnostic['editingChecks'] = edit_checks
@@ -171,7 +184,7 @@ window.addEventListener('unhandledrejection', event => window.__desktopStartupEr
                     const hero = document.getElementById('hero-body');
                     const waits = document.getElementById('hero-foot');
                     const expectedWaits = waits?.querySelector('[data-index="22"]') && waits?.querySelector('[data-index="25"]');
-                    const expectedResult = compact(hero).includes('2面/8张') && Boolean(expectedWaits);
+                    const expectedResult = compact(hero).includes('2种/8张') && Boolean(expectedWaits);
                     const externalScripts = document.querySelectorAll('script[src]').length;
                     const externalStylesheets = document.querySelectorAll('link[rel=stylesheet]').length;
                     const hostAPI = Object.keys(window.pywebview?.api||{}).sort();

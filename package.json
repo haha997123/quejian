@@ -1,6 +1,6 @@
 {
   "name": "quejian",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "private": true,
   "description": "中文本地日麻何切分析，支持四麻与三麻",
   "license": "MIT",
